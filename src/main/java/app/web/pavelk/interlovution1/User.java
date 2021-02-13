@@ -2,9 +2,9 @@ package app.web.pavelk.interlovution1;
 
 public class User {
 
+    private String lastName;
     private String firstName;
     private String middleName;
-    private String lastName;
     private Integer age;
     private String passport;
 
@@ -12,7 +12,10 @@ public class User {
         this.lastName = lastName;
         this.firstName = firstName;
         this.middleName = middleName;
-        this.age = age.isEmpty() ? null : Integer.parseInt(age);
+        try {
+            this.age = Integer.parseInt(age); // age.isEmpty() ? null : Integer.parseInt(age);
+        } catch (NumberFormatException ignored) {
+        }
         this.passport = passport;
     }
 
