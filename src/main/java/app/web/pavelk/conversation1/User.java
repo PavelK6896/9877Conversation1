@@ -1,4 +1,4 @@
-package app.web.pavelk.interlovution1;
+package app.web.pavelk.conversation1;
 
 public class User {
 

@@ -1,4 +1,4 @@
-package app.web.pavelk.interlovution2;
+package app.web.pavelk.conversation2;
 
 import java.util.*;
 import java.util.concurrent.*;
