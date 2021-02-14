@@ -5,13 +5,29 @@ import java.util.concurrent.*;
 
 class Main1 {
     public static void main(String[] args) {
-        List<Integer> integers = Arrays.asList(1, 4, 4, 4, 1, 3, 2, 4);
+//        List<Integer> integers = Arrays.asList(1, 4, 4, 4, 1, 3, 2, 4);
+        List<Integer> integers = new ArrayList<>();
+        for (int i = 0; i < 5555; i++) {
+            integers.add(ThreadLocalRandom.current().nextInt(10,20));
+        }
+
         //количество переменыйх которые дублируються
+        double time1 = System.nanoTime();
         System.out.println(search1(integers));
+        double time2 = System.nanoTime();
         System.out.println(search2(integers));
+        double time3 = System.nanoTime();
         //количество дубликатов
         System.out.println(search3(integers));
+        double time4 = System.nanoTime();
         System.out.println(search4(integers));
+        double time5 = System.nanoTime();
+
+        System.out.println("1 " + (time2 - time1) / 1000);
+        System.out.println("2 " + (time3 - time2) / 1000);
+        System.out.println("3 " + (time4 - time3) / 1000);
+        System.out.println("4 " + (time5 - time4) / 1000);
+
     }
 
     public static Integer search1(List<Integer> list) {

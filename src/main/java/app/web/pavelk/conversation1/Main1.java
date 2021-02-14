@@ -21,14 +21,12 @@ class Main1 {
                     list.get(indexUser + 4)));
         }
         System.out.println(System.currentTimeMillis() - time1);
-
         listUser.forEach(System.out::println);
         listUser.sort(Comparator.comparing(User::getAge, Comparator.nullsLast(Comparator.naturalOrder())));
         System.out.println("--");
         listUser.forEach(System.out::println);
-        Comparator<User> compareById = (User o1, User o2) -> o1.getFirstName().compareTo(o2.getFirstName());
-        compareById.reversed();
-        Collections.sort(listUser, compareById);
+        Comparator<User> compareByFirstName = Comparator.comparing(User::getFirstName);
+        Collections.sort(listUser, compareByFirstName.reversed());
         System.out.println("--");
         listUser.forEach(System.out::println);
     }
@@ -49,7 +47,6 @@ class Main2 {
             }
         });
         System.out.println(System.currentTimeMillis() - time1);
-
         listUser.forEach(System.out::println);
         System.out.println("--");
         listUser.sort(Comparator.comparing(User::getAge, Comparator.nullsLast(Comparator.naturalOrder())));
