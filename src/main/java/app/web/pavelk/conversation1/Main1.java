@@ -11,16 +11,20 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 class Main1 {
     public static void main(String[] args) throws IOException {
-        long time1 = System.currentTimeMillis();
+        double time1 = System.nanoTime();
         List<String> list = Files.readAllLines(Paths.get("user.txt"), StandardCharsets.UTF_8);
         List<User> listUser = new ArrayList<>();
         int size = list.size() - list.size() % 5;
+        int count = list.size() / 5;
+        int current = 1;
         for (int indexUser = 0; indexUser < size; indexUser += 5) {
             listUser.add(new User(list.get(indexUser), list.get(indexUser + 1),
                     list.get(indexUser + 2), list.get(indexUser + 3),
                     list.get(indexUser + 4)));
+            System.out.println("current " + current + " all " + count + " " + (100.0 / count ) * current  + " %");
+            current++;
         }
-        System.out.println(System.currentTimeMillis() - time1);
+        System.out.println("1 " + (System.nanoTime() - time1) / 1_000_000);
         listUser.forEach(System.out::println);
         listUser.sort(Comparator.comparing(User::getAge, Comparator.nullsLast(Comparator.naturalOrder())));
         System.out.println("--");
@@ -100,7 +104,7 @@ class Main4 {
 
 class Main5 {
     public static void main(String[] args) throws IOException {
-        long time1 = System.currentTimeMillis();
+        double time1 = System.nanoTime();
         List<String> list = Files.readAllLines(Paths.get("user.txt"), StandardCharsets.UTF_8);
         List<User> listUser = new ArrayList<>();
         int count = (list.size() / 5);
@@ -112,7 +116,7 @@ class Main5 {
             System.out.println("current " + (indexUser + 1) + " all " + count + " " + (100.0 / count ) * (indexUser + 1)  + " %" );
             beginNewUser += 4;
         }
-        System.out.println(System.currentTimeMillis() - time1);
+        System.out.println("1 " + (System.nanoTime() - time1) / 1_000_000);
         listUser.forEach(System.out::println);
         listUser.sort(Comparator.comparing(User::getAge, Comparator.nullsLast(Comparator.naturalOrder())));
         System.out.println("--");
