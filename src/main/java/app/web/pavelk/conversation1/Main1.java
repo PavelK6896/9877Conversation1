@@ -8,10 +8,11 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Stream;
 
 class Main1 {
     public static void main(String[] args) throws IOException {
-        double time1 = System.nanoTime();
+        long time1 = System.nanoTime();
         List<String> list = Files.readAllLines(Paths.get("user.txt"), StandardCharsets.UTF_8);
         List<User> listUser = new ArrayList<>();
         int size = list.size() - list.size() % 5;
@@ -24,7 +25,7 @@ class Main1 {
             System.out.println("current " + current + " all " + count + " " + (100.0 / count ) * current  + " %");
             current++;
         }
-        System.out.println("1 " + (System.nanoTime() - time1) / 1_000_000);
+        System.out.println("1 " + (System.nanoTime() - time1) / 1_000_000.0);
         listUser.forEach(System.out::println);
         listUser.sort(Comparator.comparing(User::getAge, Comparator.nullsLast(Comparator.naturalOrder())));
         System.out.println("--");
@@ -38,11 +39,12 @@ class Main1 {
 
 class Main2 {
     public static void main(String[] args) throws IOException {
-        long time1 = System.currentTimeMillis();
+        long time1 = System.nanoTime();
         List<String> data = new ArrayList<>();
         List<User> listUser = new ArrayList<>();
         AtomicInteger count = new AtomicInteger();
-        Files.lines(Paths.get("user.txt")).sequential().forEach(f -> {
+        Stream<String> sequential = Files.lines(Paths.get("user.txt")).sequential();
+        sequential.forEach(f -> {
             data.add(f);
             if (count.incrementAndGet() == 5) {
                 listUser.add(new User(data.get(0), data.get(1), data.get(2), data.get(3), data.get(4)));
@@ -50,7 +52,8 @@ class Main2 {
                 data.clear();
             }
         });
-        System.out.println(System.currentTimeMillis() - time1);
+        sequential.close();
+        System.out.println("1 " + (System.nanoTime() - time1) / 1_000_000.0);
         listUser.forEach(System.out::println);
         System.out.println("--");
         listUser.sort(Comparator.comparing(User::getAge, Comparator.nullsLast(Comparator.naturalOrder())));
@@ -61,27 +64,28 @@ class Main2 {
 
 class Main3 {
     public static void main(String[] args) throws IOException {
-        long time1 = System.currentTimeMillis();
-        BufferedReader bufferedReader = new BufferedReader(new FileReader("user.txt"));
-        int userSize = 0;
-        List<String> list = new ArrayList<>();
-        List<User> listUser = new ArrayList<>();
-        String string;
-        while ((string = bufferedReader.readLine()) != null) {
-            list.add(string);
-            userSize++;
-            if (userSize == 5) {
-                User user = new User(list.get(0), list.get(1), list.get(2), list.get(3), list.get(4));
-                listUser.add(user);
-                list = new ArrayList<>();
-                userSize = 0;
+        long time1 = System.nanoTime();
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader("user.txt"))) {
+            int userSize = 0;
+            List<String> list = new ArrayList<>();
+            List<User> listUser = new ArrayList<>();
+            String string;
+            while ((string = bufferedReader.readLine()) != null) {
+                list.add(string);
+                userSize++;
+                if (userSize == 5) {
+                    User user = new User(list.get(0), list.get(1), list.get(2), list.get(3), list.get(4));
+                    listUser.add(user);
+                    list = new ArrayList<>();
+                    userSize = 0;
+                }
             }
+            System.out.println("1 " + (System.nanoTime() - time1) / 1_000_000.0);
+            listUser.forEach(System.out::println);
+            listUser.sort(Comparator.comparing(User::getAge, Comparator.nullsLast(Comparator.naturalOrder())).reversed());
+            System.out.println("--");
+            listUser.forEach(System.out::println);
         }
-        System.out.println(System.currentTimeMillis() - time1);
-        listUser.forEach(System.out::println);
-        listUser.sort(Comparator.comparing(User::getAge, Comparator.nullsLast(Comparator.naturalOrder())).reversed());
-        System.out.println("--");
-        listUser.forEach(System.out::println);
     }
 }
 
@@ -104,7 +108,7 @@ class Main4 {
 
 class Main5 {
     public static void main(String[] args) throws IOException {
-        double time1 = System.nanoTime();
+        long time1 = System.nanoTime();
         List<String> list = Files.readAllLines(Paths.get("user.txt"), StandardCharsets.UTF_8);
         List<User> listUser = new ArrayList<>();
         int count = (list.size() / 5);
@@ -116,7 +120,7 @@ class Main5 {
             System.out.println("current " + (indexUser + 1) + " all " + count + " " + (100.0 / count ) * (indexUser + 1)  + " %" );
             beginNewUser += 4;
         }
-        System.out.println("1 " + (System.nanoTime() - time1) / 1_000_000);
+        System.out.println("1 " + (System.nanoTime() - time1) / 1_000_000.0);
         listUser.forEach(System.out::println);
         listUser.sort(Comparator.comparing(User::getAge, Comparator.nullsLast(Comparator.naturalOrder())));
         System.out.println("--");
@@ -133,7 +137,8 @@ class Main6 {
         List<String> data = new ArrayList<>();
         List<User> listUser = new ArrayList<>();
         AtomicInteger count = new AtomicInteger();
-        Files.lines(Paths.get("user.txt")).sequential().forEach(f -> {
+        Stream<String> sequential = Files.lines(Paths.get("user.txt")).sequential();
+        sequential.forEach(f -> {
             data.add(f);
             if (count.incrementAndGet() == 5) {
                 listUser.add(new User(data.get(0), data.get(1), data.get(2), data.get(3), data.get(4)));
@@ -141,6 +146,7 @@ class Main6 {
                 data.clear();
             }
         });
+        sequential.close();
 
         Map<User, Integer> map = new HashMap<>();
         Map<User, User> map2 = new HashMap<>();
@@ -175,6 +181,38 @@ class Main8 {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        }
+    }
+}
+
+
+class Main9 {
+    public static void main(String[] args) throws IOException {
+        long time1 = System.nanoTime();
+        try (BufferedReader bufferedReader = Files.newBufferedReader(Paths.get("user.txt"), StandardCharsets.UTF_8)) {
+            List<User> listUser = new ArrayList<>();
+            List<String> list = new ArrayList<>();
+            String string;
+            int userSize = 0;
+            while ((string = bufferedReader.readLine()) != null) {
+                list.add(string);
+                userSize++;
+                if (userSize == 5) {
+                    User user = new User(list.get(0), list.get(1), list.get(2), list.get(3), list.get(4));
+                    listUser.add(user);
+                    list = new ArrayList<>();
+                    userSize = 0;
+                }
+            }
+            System.out.println("1 " + (System.nanoTime() - time1) / 1_000_000.0);
+            listUser.forEach(System.out::println);
+            listUser.sort(Comparator.comparing(User::getAge, Comparator.nullsLast(Comparator.naturalOrder())));
+            System.out.println("--");
+            listUser.forEach(System.out::println);
+            Comparator<User> compareByFirstName = Comparator.comparing(User::getFirstName);
+            Collections.sort(listUser, compareByFirstName.reversed());
+            System.out.println("--");
+            listUser.forEach(System.out::println);
         }
     }
 }

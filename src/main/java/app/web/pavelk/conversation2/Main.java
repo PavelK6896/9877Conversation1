@@ -12,22 +12,21 @@ class Main1 {
         }
 
         //количество переменыйх которые дублируються
-        double time1 = System.nanoTime();
+        long time1 = System.nanoTime();
         System.out.println(search1(integers));
-        double time2 = System.nanoTime();
+        long time2 = System.nanoTime();
         System.out.println(search2(integers));
-        double time3 = System.nanoTime();
+        long time3 = System.nanoTime();
         //количество дубликатов
         System.out.println(search3(integers));
-        double time4 = System.nanoTime();
+        long time4 = System.nanoTime();
         System.out.println(search4(integers));
-        double time5 = System.nanoTime();
+        long time5 = System.nanoTime();
 
-        System.out.println("1 " + (time2 - time1) / 1000);
-        System.out.println("2 " + (time3 - time2) / 1000);
-        System.out.println("3 " + (time4 - time3) / 1000);
-        System.out.println("4 " + (time5 - time4) / 1000);
-
+        System.out.println("1 " + (time2 - time1) / 1_000_000.0);
+        System.out.println("2 " + (time3 - time2) / 1_000_000.0);
+        System.out.println("3 " + (time4 - time3) / 1_000_000.0);
+        System.out.println("4 " + (time5 - time4) / 1_000_000.0);
     }
 
     public static Integer search1(List<Integer> list) {
@@ -111,3 +110,93 @@ class Main3 {
 }
 
 
+class Main4 {
+    public static void main(String[] args) throws InterruptedException, ExecutionException {
+        ExecutorService es2 = Executors.newFixedThreadPool(1);
+        Future<?> submit = es2.submit(() -> System.out.println("--"));
+        submit.get();
+        for (int i = 0; i < 2; i++) {
+            TimeUnit.SECONDS.sleep(1);
+            es2.submit(() -> System.out.println(Thread.currentThread().getName()));
+        }
+        for (int i = 0; i < 2; i++) {
+            TimeUnit.SECONDS.sleep(1);
+            CompletableFuture.runAsync(() -> System.out.println(Thread.currentThread().getName()));
+        }
+
+    }
+}
+
+
+class Main5 {
+    public static void main(String[] args) {
+        CompletableFuture<String> completableFuture1 = new CompletableFuture<>();
+        Executors.newCachedThreadPool().submit(() -> {
+            Thread.sleep(500);
+            completableFuture1.complete("Hello 1 -- " + Thread.currentThread().getName());
+            throw new CompletionException(new Exception());
+        });
+
+        System.out.println(completableFuture1.join());
+
+        try {
+            System.out.println(completableFuture1.get());
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+
+        CompletableFuture<String> completableFuture2 = CompletableFuture.supplyAsync(() -> {
+            System.out.println("Hello 2 -- " + Thread.currentThread().getName());
+            return null;
+        });
+        completableFuture2.join();
+        try {
+            completableFuture2.get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+
+        BlockingQueue<Runnable> blockingQueue = new LinkedBlockingDeque<>(1);
+        ExecutorService es = new ThreadPoolExecutor(1, 10, 100L, TimeUnit.SECONDS, blockingQueue);
+
+        CompletableFuture<String> completableFuture3 = CompletableFuture.supplyAsync(() -> {
+
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            System.out.println("Hello 3 -- " + Thread.currentThread().getName());
+            throw new CompletionException(new Exception());
+//            return "Hello";
+        }, es);
+
+        for (int i = 0; i < 10; i++) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            if (completableFuture3.isDone()) {
+                try {
+                    System.out.println(i + completableFuture3.get());
+                } catch (InterruptedException | ExecutionException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        }
+
+        ExecutorService es2 = Executors.newFixedThreadPool(1);
+        CompletableFuture.runAsync(() -> {
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            System.out.println("Hello 4 -- " + Thread.currentThread().getName());
+
+        }, es2);
+
+    }
+}
