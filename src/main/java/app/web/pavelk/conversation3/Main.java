@@ -47,6 +47,9 @@ public class Main {
 
         A a2 = b;
         C c = (C) a;
+
+        //--
+        System.out.println(a.equals(b));
     }
 }
 

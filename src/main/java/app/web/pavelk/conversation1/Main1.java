@@ -22,7 +22,7 @@ class Main1 {
             listUser.add(new User(list.get(indexUser), list.get(indexUser + 1),
                     list.get(indexUser + 2), list.get(indexUser + 3),
                     list.get(indexUser + 4)));
-            System.out.println("current " + current + " all " + count + " " + (100.0 / count ) * current  + " %");
+            System.out.println("current " + current + " all " + count + " " + (100.0 / count) * current + " %");
             current++;
         }
         System.out.println("1 " + (System.nanoTime() - time1) / 1_000_000.0);
@@ -117,7 +117,7 @@ class Main5 {
             listUser.add(new User(list.get(indexUser + beginNewUser), list.get(indexUser + beginNewUser + 1),
                     list.get(indexUser + beginNewUser + 2), list.get(indexUser + beginNewUser + 3),
                     list.get(indexUser + beginNewUser + 4)));
-            System.out.println("current " + (indexUser + 1) + " all " + count + " " + (100.0 / count ) * (indexUser + 1)  + " %" );
+            System.out.println("current " + (indexUser + 1) + " all " + count + " " + (100.0 / count) * (indexUser + 1) + " %");
             beginNewUser += 4;
         }
         System.out.println("1 " + (System.nanoTime() - time1) / 1_000_000.0);
@@ -125,7 +125,7 @@ class Main5 {
         listUser.sort(Comparator.comparing(User::getAge, Comparator.nullsLast(Comparator.naturalOrder())));
         System.out.println("--");
         listUser.forEach(System.out::println);
-        Comparator<User> sort1 = Comparator.comparing(User::getAge,Comparator.nullsFirst(Comparator.naturalOrder()));
+        Comparator<User> sort1 = Comparator.comparing(User::getAge, Comparator.nullsFirst(Comparator.naturalOrder()));
         Collections.sort(listUser, sort1.reversed());
         System.out.println("--");
         listUser.forEach(System.out::println);
